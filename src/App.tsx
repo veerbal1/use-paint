@@ -2,11 +2,7 @@ import usePaint from './hooks/use-paint';
 
 const App = () => {
   const { canvasRef } = usePaint({
-    canvas: {
-      width: 800,
-      height: 400,
-      bgColor: '#ffffff',
-    },
+    canvas: {},
   });
   return (
     <div className="w-screen h-screen flex justify-center items-center">

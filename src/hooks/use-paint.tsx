@@ -1,8 +1,20 @@
 import { useEffect, useRef } from 'react';
 
-function usePaint({
-  canvas: { width = 400, height = 400, bgColor = 'white' },
-}) {
+interface Canvas {
+  width?: number;
+  height?: number;
+  bgColor?: string;
+}
+
+interface UsePaint {
+  canvas?: Canvas;
+}
+
+const defaultWidth = 800;
+const defaultHeight = defaultWidth / 1.77;
+
+function usePaint(props?: UsePaint) {
+  const { width = defaultWidth, height = defaultHeight, bgColor = 'white' } = props?.canvas || {};
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
