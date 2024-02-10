@@ -69,6 +69,8 @@ const usePaint = (props?: UsePaint) => {
       if (!ctx) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = props?.canvas?.bgColor || '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   };
 
@@ -101,7 +103,11 @@ const usePaint = (props?: UsePaint) => {
 
     canvas.width = props?.canvas?.width || defaultWidth;
     canvas.height = props?.canvas?.height || defaultHeight;
-    canvas.style.backgroundColor = props?.canvas?.bgColor || '#fff';
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.fillStyle = props?.canvas?.bgColor || '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
   return { canvasRef };
