@@ -9,13 +9,14 @@ const App = () => {
     },
   });
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="w-screen h-screen flex justify-center items-center relative">
+      {/* <h1 className="font-sans text-5xl absolute left-10 rotate-[-10deg]">@Veerbal01</h1> */}
       <div className="w-[60%] flex flex-col items-center pointer-events-none">
         <canvas
           ref={canvasRef}
           className="rounded-3xl shadow-lg border border-gray-200 pointer-events-auto"
         ></canvas>
-        <div className=" relative flex w-full justify-center gap-4 items-center min-h-16 mt-[7rem] max-h-16 rounded-full shadow-lg border pointer-events-auto pb-16">
+        <div className=" relative flex w-[50%] justify-center gap-4 items-center min-h-16 mt-[7rem] max-h-16 rounded-full shadow-lg border pointer-events-auto pb-16">
           {[
             '#e63946',
             '#8338ec',
@@ -30,7 +31,15 @@ const App = () => {
               selected={selectedPencilColor === color}
             />
           ))}
-          <div className="w-full h-full absolute bg-white rounded-full bottom-0"></div>
+          <div className="w-full h-full absolute bg-white rounded-full bottom-0 flex items-center justify-center">
+            <h1 className="text-muted-foreground text-lg">
+              Press{' '}
+              <code className="rounded-sm border p-2 text-black border-black">
+                C
+              </code>{' '}
+              to clear the canvas
+            </h1>
+          </div>
         </div>
       </div>
     </div>
@@ -49,7 +58,9 @@ const Pencil = ({
   return (
     <div
       role="button"
-      className={`w-10  transition-transform hover:translate-y-[-1.95rem] cursor-pointer drop-shadow-sm ${selected ? 'translate-y-[-1.95rem]' : ''}`}
+      className={`w-10  transition-transform hover:translate-y-[-1.95rem] cursor-pointer drop-shadow-sm ${
+        selected ? 'translate-y-[-1.95rem]' : ''
+      }`}
       onClick={onClick}
     >
       <svg
