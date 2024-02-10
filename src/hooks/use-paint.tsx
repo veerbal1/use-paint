@@ -17,7 +17,7 @@ interface UsePaint {
 }
 
 const defaultWidth = 800;
-const defaultHeight = defaultWidth / 1.77; // 16:9
+const defaultHeight = defaultWidth / 1.77; // 16:9 aspect ratio
 
 const usePaint = (props?: UsePaint) => {
   const { pencil } = props || {};
@@ -26,19 +26,21 @@ const usePaint = (props?: UsePaint) => {
   const [colorLine, setColorLine] = useState(pencil?.color || '#000');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // Function to start drawing on the canvas
   const startDrawing = (event: MouseEvent) => {
     setPressedMouse(true);
     setCoordinates({
       x: event.clientX - (canvasRef.current?.offsetLeft || 0),
-
       y: event.clientY - (canvasRef.current?.offsetTop || 0),
     });
   };
 
+  // Function to set the color of the pencil
   const setPencilColor = (color: string) => {
-    console.log('color', color);
     setColorLine(color);
   };
+
+  // Function to draw a line on the canvas
   const drawLine = (event: MouseEvent) => {
     if (!pressedMouse) return;
     const canvas = canvasRef.current;
@@ -60,10 +62,12 @@ const usePaint = (props?: UsePaint) => {
     setCoordinates({ x: xM, y: yM });
   };
 
+  // Function to stop drawing on the canvas
   const stopDrawing = () => {
     setPressedMouse(false);
   };
 
+  // Function to clear the canvas when 'c' key is pressed
   const clearCanvas = (event: KeyboardEvent) => {
     if (event.key === 'c') {
       const canvas = canvasRef.current;
@@ -78,29 +82,25 @@ const usePaint = (props?: UsePaint) => {
     }
   };
 
+  // Event listeners for mouse and keyboard events
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const startDrawingListener = (event: MouseEvent) => startDrawing(event);
-    const drawLineListener = (event: MouseEvent) => drawLine(event);
-    const stopDrawingListener = () => stopDrawing();
-    const clearCanvasListener = (event: KeyboardEvent) => clearCanvas(event);
-
-    canvas.addEventListener('mousedown', startDrawingListener);
-    canvas.addEventListener('mousemove', drawLineListener);
-    canvas.addEventListener('mouseup', stopDrawingListener);
-    window.addEventListener('keydown', clearCanvasListener);
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', drawLine);
+    canvas.addEventListener('mouseup', stopDrawing);
+    window.addEventListener('keydown', clearCanvas);
 
     return () => {
-      canvas.removeEventListener('mousedown', startDrawingListener);
-      canvas.removeEventListener('mousemove', drawLineListener);
-      canvas.removeEventListener('mouseup', stopDrawingListener);
-      window.removeEventListener('keydown', clearCanvasListener);
+      canvas.removeEventListener('mousedown', startDrawing);
+      canvas.removeEventListener('mousemove', drawLine);
+      canvas.removeEventListener('mouseup', stopDrawing);
+      window.removeEventListener('keydown', clearCanvas);
     };
   }, [startDrawing, drawLine, stopDrawing, clearCanvas]);
 
-  // Set canvas size
+  // Set canvas size and background color
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
