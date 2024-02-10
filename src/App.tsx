@@ -8,6 +8,8 @@ const App = () => {
         <canvas
           ref={canvasRef}
           className="rounded-3xl shadow-lg border border-gray-200"
+          width={800}
+          height={450}
         ></canvas>
         <div className="flex w-full justify-between items-center mt-4 min-h-16 rounded-full shadow-lg border"></div>
       </div>
