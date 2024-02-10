@@ -23,7 +23,7 @@ const usePaint = (props?: UsePaint) => {
   const { pencil } = props || {};
   const [pressedMouse, setPressedMouse] = useState(false);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-  const [colorLine] = useState(pencil?.color || '#000');
+  const [colorLine, setColorLine] = useState(pencil?.color || '#000');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const startDrawing = (event: MouseEvent) => {
@@ -35,6 +35,10 @@ const usePaint = (props?: UsePaint) => {
     });
   };
 
+  const setPencilColor = (color: string) => {
+    console.log('color', color);
+    setColorLine(color);
+  };
   const drawLine = (event: MouseEvent) => {
     if (!pressedMouse) return;
     const canvas = canvasRef.current;
@@ -110,7 +114,7 @@ const usePaint = (props?: UsePaint) => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
-  return { canvasRef };
+  return { canvasRef, setPencilColor, selectedPencilColor: colorLine };
 };
 
 export default usePaint;
