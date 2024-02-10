@@ -28,7 +28,11 @@ const usePaint = (props?: UsePaint) => {
 
   const startDrawing = (event: MouseEvent) => {
     setPressedMouse(true);
-    setCoordinates({ x: event.clientX, y: event.clientY });
+    setCoordinates({
+      x: event.clientX - (canvasRef.current?.offsetLeft || 0),
+
+      y: event.clientY - (canvasRef.current?.offsetTop || 0),
+    });
   };
 
   const drawLine = (event: MouseEvent) => {
@@ -39,8 +43,8 @@ const usePaint = (props?: UsePaint) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const xM = event.clientX;
-    const yM = event.clientY;
+    const xM = event.clientX - (canvas.offsetLeft || 0);
+    const yM = event.clientY - (canvas.offsetTop || 0);
     ctx.beginPath();
     ctx.strokeStyle = colorLine;
     ctx.lineWidth = pencil?.width || 5;
