@@ -94,6 +94,16 @@ const usePaint = (props?: UsePaint) => {
     };
   }, [startDrawing, drawLine, stopDrawing, clearCanvas]);
 
+  // Set canvas size
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    canvas.width = props?.canvas?.width || defaultWidth;
+    canvas.height = props?.canvas?.height || defaultHeight;
+    canvas.style.backgroundColor = props?.canvas?.bgColor || '#fff';
+  }, []);
+
   return { canvasRef };
 };
 
