@@ -6,17 +6,24 @@ interface Canvas {
   bgColor?: string;
 }
 
+interface Pencil {
+  color?: string;
+  width?: number;
+}
+
 interface UsePaint {
   canvas?: Canvas;
+  pencil?: Pencil;
 }
 
 const defaultWidth = 800;
 const defaultHeight = defaultWidth / 1.77; // 16:9
 
 const usePaint = (props?: UsePaint) => {
+  const { pencil } = props || {};
   const [pressedMouse, setPressedMouse] = useState(false);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-  const [colorLine] = useState('#9ACD32');
+  const [colorLine] = useState(pencil?.color || '#000');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const startDrawing = (event: MouseEvent) => {
@@ -36,7 +43,8 @@ const usePaint = (props?: UsePaint) => {
     const yM = event.clientY;
     ctx.beginPath();
     ctx.strokeStyle = colorLine;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = pencil?.width || 5;
+    ctx.lineCap = 'round';
     ctx.moveTo(coordinates.x, coordinates.y);
     ctx.lineTo(xM, yM);
     ctx.stroke();

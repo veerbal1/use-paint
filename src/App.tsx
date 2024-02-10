@@ -1,7 +1,9 @@
 import usePaint from './hooks/use-paint';
 
 const App = () => {
-  const { canvasRef } = usePaint();
+  const { canvasRef } = usePaint({
+    pencil: { width: 10, color: 'blue' },
+  });
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="w-[60%] flex flex-col items-center">
