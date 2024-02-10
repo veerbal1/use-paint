@@ -1,9 +1,7 @@
 import usePaint from './hooks/use-paint';
 
 const App = () => {
-  const { canvasRef } = usePaint({
-    canvas: {},
-  });
+  const { canvasRef } = usePaint();
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div className="w-[60%] flex flex-col items-center">

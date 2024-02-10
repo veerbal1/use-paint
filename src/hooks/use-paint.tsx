@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Canvas {
   width?: number;
@@ -13,97 +13,62 @@ interface UsePaint {
 const defaultWidth = 800;
 const defaultHeight = defaultWidth / 1.77; // 16:9
 
-const getCoordinates = (event: MouseEvent, canvas: HTMLCanvasElement) => {
-  let x = event.clientX - canvas.offsetLeft;
-  let y = event.clientY - canvas.offsetTop;
-  return { x, y };
-};
-
-function usePaint(props?: UsePaint) {
-  const {
-    width = defaultWidth,
-    height = defaultHeight,
-    bgColor = 'white',
-  } = props?.canvas || {};
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+const usePaint = (props?: UsePaint) => {
+  const [pressedMouse, setPressedMouse] = useState(false);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-  const [isPainting, setIsPainting] = useState(false);
+  const [colorLine] = useState('#9ACD32');
+  const canvasRef = useRef(null);
 
-  const eventListeners = [
-    {
-      name: 'mousedown',
-      handler: function onMouseDown(event: MouseEvent) {
-        const canvas = canvasRef.current;
-        if (canvas) {
-          const { x, y } = getCoordinates(event, canvas);
-          setCoordinates({ x, y });
-          setIsPainting(true);
-        }
-      },
-    },
-    {
-      name: 'mousemove',
-      handler: function onMouseMove(event: MouseEvent) {
-        const canvas = canvasRef.current;
-        if (canvas) {
-          const { x, y } = getCoordinates(event, canvas);
-          setCoordinates({ x, y });
-        }
-      },
-    },
-    {
-      name: 'mouseup',
-      handler: function onMouseUp(event: MouseEvent) {
-        const canvas = canvasRef.current;
-        if (canvas) {
-          const { x, y } = getCoordinates(event, canvas);
-          setCoordinates({ x, y });
-          setIsPainting(false);
-        }
-      },
-    },
-  ];
+  const startDrawing = (event: MouseEvent) => {
+    setPressedMouse(true);
+    setCoordinates({ x: event.offsetX, y: event.offsetY });
+  };
+
+  const drawLine = (event: MouseEvent) => {
+    if (!pressedMouse) return;
+    const canvas = canvasRef.current;
+
+    const ctx = canvas.getContext('2d');
+    const xM = event.offsetX;
+    const yM = event.offsetY;
+    ctx.beginPath();
+    ctx.strokeStyle = colorLine;
+    ctx.lineWidth = 2;
+    ctx.moveTo(coordinates.x, coordinates.y);
+    ctx.lineTo(xM, yM);
+    ctx.stroke();
+    ctx.closePath();
+    setCoordinates({ x: xM, y: yM });
+  };
+
+  const stopDrawing = () => {
+    setPressedMouse(false);
+  };
+
+  const clearCanvas = (event: KeyboardEvent) => {
+    if (event.key === 'c') {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.width = width;
-      canvas.height = height;
-      eventListeners.forEach(({ name, handler }) => {
-        canvas.addEventListener(name, handler as EventListener);
-      });
-      const context = canvas.getContext('2d');
-      if (context) {
-        context.fillStyle = bgColor;
-        context.fillRect(0, 0, width, height);
-        contextRef.current = context;
-      }
-    }
-    return () => {
-      eventListeners.forEach(({ name, handler }) => {
-        canvas?.removeEventListener(name, handler as EventListener);
-      });
-    };
-  }, []);
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', drawLine);
+    canvas.addEventListener('mouseup', stopDrawing);
+    window.addEventListener('keydown', clearCanvas);
 
-  useEffect(() => {
-    if (isPainting) {
-      const context = contextRef.current;
-      if (context) {
-        console.log('painting');
-        context.beginPath();
-        context.lineWidth = 5;
-        context.lineCap = 'round';
-        context.strokeStyle = 'green';
-        context.moveTo(coordinates.x, coordinates.y);
-        context.lineTo(coordinates.x, coordinates.y);
-        context.stroke();
-      }
-    }
-  }, [coordinates.x, coordinates.y, isPainting]);
+    return () => {
+      canvas.removeEventListener('mousedown', startDrawing);
+      canvas.removeEventListener('mousemove', drawLine);
+      canvas.removeEventListener('mouseup', stopDrawing);
+      window.removeEventListener('keydown', clearCanvas);
+    };
+  }, [startDrawing, drawLine, stopDrawing, clearCanvas]);
 
   return { canvasRef };
-}
+};
 
 export default usePaint;
