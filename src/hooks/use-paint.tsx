@@ -89,7 +89,17 @@ function usePaint(props?: UsePaint) {
 
   useEffect(() => {
     if (isPainting) {
-      console.log('coordinates', coordinates);
+      const context = contextRef.current;
+      if (context) {
+        console.log('painting');
+        context.beginPath();
+        context.lineWidth = 5;
+        context.lineCap = 'round';
+        context.strokeStyle = 'green';
+        context.moveTo(coordinates.x, coordinates.y);
+        context.lineTo(coordinates.x, coordinates.y);
+        context.stroke();
+      }
     }
   }, [coordinates.x, coordinates.y, isPainting]);
 
